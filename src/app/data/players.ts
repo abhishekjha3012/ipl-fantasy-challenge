@@ -99,3 +99,15 @@ const playerArray = [
     imageAddress: "",
   },
 ];
+
+export interface PlayerProfile {
+  name: string;
+  nickName?: string;
+  id?: string;
+  num?: number;
+  color?: string;
+  imageAddress?: string;
+}
+
+export const PLAYERS: PlayerProfile[] = playerArray;
+

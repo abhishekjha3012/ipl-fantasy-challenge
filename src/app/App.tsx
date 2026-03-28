@@ -4,39 +4,33 @@ import { StatsCard } from './components/StatsCard';
 import { RulesModal } from './components/RulesModal';
 import { Trophy, TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
 import { useState } from 'react';
+import { PLAYERS, PlayerProfile } from './data/players';
 
-// Mock data for 12 players
-const PLAYERS = [
-  'Rahul Sharma',
-  'Priya Patel',
-  'Amit Kumar',
-  'Sneha Reddy',
-  'Vikram Singh',
-  'Anjali Gupta',
-  'Rohan Mehta',
-  'Pooja Desai',
-  'Arjun Nair',
-  'Neha Joshi',
-  'Karan Malhotra',
-  'Divya Iyer'
-];
+const extractPlayerNames = (players: (string | PlayerProfile)[]): string[] => {
+  if (!Array.isArray(players)) return [];
+
+  return players.map((item) => {
+    if (typeof item === 'string') return item;
+    return item?.name || item?.nickName || item?.id || String(item?.num || 'Unknown');
+  }).filter(Boolean) as string[];
+};
 
 // Generate mock match-by-match data (10 matches so far)
-const generateMatchData = () => {
-  const matchData = [];
-  
+const generateMatchData = (playerNames: string[]) => {
+  const matchData: any[] = [];
+
   for (let match = 1; match <= 10; match++) {
     const matchEntry: any = { match };
-    
-    PLAYERS.forEach(player => {
+
+    playerNames.forEach(player => {
       // Random win/loss between -3000 to +5000 per match
       const result = Math.floor(Math.random() * 8000) - 3000;
       matchEntry[player] = result;
     });
-    
+
     matchData.push(matchEntry);
   }
-  
+
   return matchData;
 };
 
@@ -57,50 +51,40 @@ const calculateStreak = (matchData: any[], playerName: string): number => {
 };
 
 // Generate mock data for leaderboard table
-const generatePlayerData = (matchData: any[]) => {
-  return PLAYERS.map(name => {
-    // Calculate total prize won
+const generatePlayerData = (matchData: any[], players: (string | PlayerProfile)[]) => {
+  const playerNames = extractPlayerNames(players);
+
+  return playerNames.map(name => {
     const prizeWon = matchData.reduce((sum, match) => sum + (match[name] || 0), 0);
-    
-    // Get last match result
-    const lastMatchWin = matchData[matchData.length - 1][name];
-    
-    // Calculate streak
+    const lastMatchWin = matchData[matchData.length - 1]?.[name] || 0;
     const streak = calculateStreak(matchData, name);
-    
-    // Calculate win rate
     const wins = matchData.filter(match => match[name] > 0).length;
-    const winRate = Math.round((wins / matchData.length) * 100);
-    
-    // Find best match
+    const winRate = matchData.length > 0 ? Math.round((wins / matchData.length) * 100) : 0;
     const bestMatch = Math.max(...matchData.map(match => match[name] || 0));
-    
-    // Calculate average per match
-    const avgPerMatch = Math.round(prizeWon / matchData.length);
-    
-    // Get recent form (last 5 matches)
+    const avgPerMatch = matchData.length > 0 ? Math.round(prizeWon / matchData.length) : 0;
     const recentForm = matchData.slice(-5).map(match => match[name]);
-    
+
     return {
       name,
-      totalMatches: 15, // Total matches in the tournament
-      matchesPlayed: Math.floor(Math.random() * 3) + 8, // Between 8-10 matches played
+      totalMatches: 15,
+      matchesPlayed: Math.floor(Math.random() * 3) + 8,
       prizeWon,
       lastMatchWin,
       streak,
       winRate,
       bestMatch,
       avgPerMatch,
-      recentForm
+      recentForm,
     };
   });
 };
 
 export default function App() {
   const [isRulesOpen, setIsRulesOpen] = useState(false);
-  
-  const matchData = generateMatchData();
-  const playerData = generatePlayerData(matchData);
+
+  const playerNames = extractPlayerNames(PLAYERS);
+  const matchData = generateMatchData(playerNames);
+  const playerData = generatePlayerData(matchData, PLAYERS);
 
   // Calculate stats
   const totalPrizePool = playerData.reduce((sum, p) => sum + Math.abs(p.prizeWon), 0);
@@ -215,7 +199,7 @@ export default function App() {
         <LeaderboardTable players={playerData} />
 
         {/* Trend Graph */}
-        <TrendGraph matchData={matchData} playerNames={PLAYERS} />
+        <TrendGraph matchData={matchData} playerNames={playerNames} />
 
         {/* Footer */}
         <div 
