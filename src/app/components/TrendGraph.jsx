@@ -1,28 +1,22 @@
 import { useState, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, ChevronDown, X } from 'lucide-react';
+import { useMatchData } from '../MatchDataContext';
+import { COLORS } from '../data/emptyData';
+import { PLAYERS } from '../data/players';
+import { calculatePerMatchPlayerWinning, calculatePerMatchPlayerTotal, extractPlayerDetailByKey } from '../utils/app';
 
-interface MatchData {
-  match: number;
-  [playerName: string]: number;
-}
 
-interface TrendGraphProps {
-  matchData: MatchData[];
-  playerNames: string[];
-}
+export function TrendGraph() {
+  const { rawMatchData, perMatchPlayerTotal } = useMatchData();
+  const [ selectedPlayers, setSelectedPlayers ] = useState([]);
+  const [ isDropdownOpen, setIsDropdownOpen ] = useState(false);
 
-const COLORS = [
-  '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-  '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52D17C',
-  '#FF85A2', '#7FCDFF'
-];
+  const playerNames = useMemo(() => 
+    extractPlayerDetailByKey(PLAYERS, 'nickName'),
+  [PLAYERS]);
 
-export function TrendGraph({ matchData, playerNames }: TrendGraphProps) {
-  const [selectedPlayers, setSelectedPlayers] = useState<string[]>(playerNames.slice(0, 3));
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const togglePlayer = (player: string) => {
+  const togglePlayer = (player) => {
     setSelectedPlayers(prev => {
       if (prev.includes(player)) {
         return prev.filter(p => p !== player);
@@ -42,27 +36,25 @@ export function TrendGraph({ matchData, playerNames }: TrendGraphProps) {
 
   // Calculate cumulative winnings for each player
   const cumulativeData = useMemo(() => {
-    return matchData.map((match, index) => {
-      const cumulative: MatchData = { match: match.match };
-      
-      playerNames.forEach(player => {
-        let sum = 0;
-        for (let i = 0; i <= index; i++) {
-          sum += matchData[i][player] || 0;
-        }
-        cumulative[player] = sum;
+    const chartData = rawMatchData.map((match, index) => {
+      const dataPoint = { name: match?.match};
+      selectedPlayers.forEach(playerName => {
+        const playerId = PLAYERS.find(p => p.nickName === playerName)?.id
+        const playerWinningArray = perMatchPlayerTotal?.[playerId] || [];
+        dataPoint[playerName] = playerWinningArray[index] || 0;
       });
-      
-      return cumulative;
+      return dataPoint;
     });
-  }, [matchData, playerNames]);
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+    return chartData;
+  }, [rawMatchData, selectedPlayers]);
+
+  const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-gray-900/95 backdrop-blur-sm border border-white/20 rounded-lg p-3 shadow-xl">
           <p className="text-white font-semibold mb-2">Match {label}</p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry, index) => (
             <p key={index} style={{ color: entry.color }} className="text-sm">
               {entry.name}: ₹{entry.value.toLocaleString('en-IN')}
             </p>
@@ -178,16 +170,16 @@ export function TrendGraph({ matchData, playerNames }: TrendGraphProps) {
           <LineChart data={cumulativeData}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis
-              dataKey="match"
+              dataKey="name"
               stroke="rgba(255,255,255,0.5)"
               tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 12 }}
-              label={{ value: 'Match Number', position: 'insideBottom', offset: -5, fill: 'rgba(255,255,255,0.7)' }}
+              label={{ value: '', position: 'insideBottom', offset: -5, fill: 'rgba(255,255,255,0.7)' }}
             />
             <YAxis
               stroke="rgba(255,255,255,0.5)"
               tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 12 }}
-              label={{ value: 'Cumulative Winnings (₹)', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.7)' }}
-              tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+              label={{ value: 'Winnings (₹)', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.7)' }}
+              tickFormatter={(value) => `₹${value}`}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend

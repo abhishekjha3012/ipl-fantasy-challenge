@@ -159,7 +159,7 @@ export default function App() {
         {/* <LeaderboardTable players={playerData} /> */}
 
         {/* Trend Graph */}
-        {/* <TrendGraph matchData={matchData} playerNames={playerNames} /> */}
+        <TrendGraph />
 
         {/* Footer */}
         <Footer />

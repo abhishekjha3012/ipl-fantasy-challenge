@@ -85,13 +85,15 @@ export const calculatePerMatchPlayerTotal = (matchData, playerIds) => {
   if (!Array.isArray(matchData) || !Array.isArray(playerIds)) return 0;
   let result = {};
   playerIds.forEach((playerId) => {
+    const playerWinningTotaArray = [];
     let total = 0;
     matchData.forEach((match) => {
       const winningAmount = extractWinningAmountForPlayerInMatch(match, playerId);
       const entryFee = extractEntryFeeForPlayerInMatch(match, playerId);
       total += (winningAmount ?? 0) - entryFee;
+      playerWinningTotaArray.push(total);
     });
-    result[playerId] = total;
+    result[playerId] = playerWinningTotaArray;
   });
   return result;
 };

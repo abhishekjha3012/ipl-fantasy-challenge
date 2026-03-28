@@ -12,3 +12,9 @@ export const EMPTY_STAT_CARD_DATA = {
     biggestWinner: { name: 'N/A', prizeWon: 0 },
     biggestLoser: { name: 'N/A', prizeWon: 0 },
 }
+
+export const COLORS = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+  '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52D17C',
+  '#FF85A2', '#7FCDFF'
+];
