@@ -1,3 +1,4 @@
+import React from 'react';
 import { X, Trophy } from 'lucide-react';
 
 import { rules } from '../data/rules';
