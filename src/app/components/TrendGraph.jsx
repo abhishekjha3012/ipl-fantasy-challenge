@@ -4,7 +4,7 @@ import { TrendingUp, ChevronDown, X } from 'lucide-react';
 import { useMatchData } from '../MatchDataContext';
 import { COLORS } from '../data/emptyData';
 import { PLAYERS } from '../data/players';
-import { calculatePerMatchPlayerWinning, calculatePerMatchPlayerTotal, extractPlayerDetailByKey } from '../utils/app';
+import { extractPlayerDetailByKey } from '../utils/app';
 
 
 export function TrendGraph() {

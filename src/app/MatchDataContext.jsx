@@ -14,6 +14,8 @@ export const MatchDataProvider = ({ children }) => {
   const [ rawMatchData, setRawMatchData ] = useState([]);
   const [ perMatchPlayerWinning, setPerMatchPlayerWinning ] = useState([]);
   const [ perMatchPlayerTotal, setPerMatchPlayerTotal ] = useState([]);
+  const [ overallPlayerTotal, setOverallPlayerTotal ] = useState([]);
+  const [ perMatchPlayerWinningMinusFee, setPerMatchPlayerWinningMinusFee ] = useState([]);   
 
   const value = useMemo(() => ({
     rawMatchData,
@@ -21,8 +23,16 @@ export const MatchDataProvider = ({ children }) => {
     perMatchPlayerWinning,
     setPerMatchPlayerWinning,
     perMatchPlayerTotal,
-    setPerMatchPlayerTotal
-  }), [rawMatchData, perMatchPlayerWinning, perMatchPlayerTotal]);
+    setPerMatchPlayerTotal,
+    overallPlayerTotal,
+    setOverallPlayerTotal,
+    perMatchPlayerWinningMinusFee,
+    setPerMatchPlayerWinningMinusFee,
+  }), [
+    rawMatchData, perMatchPlayerWinning, 
+    perMatchPlayerTotal, overallPlayerTotal, 
+    perMatchPlayerWinningMinusFee
+]);
 
   return (
     <MatchDataContext.Provider value={value}>

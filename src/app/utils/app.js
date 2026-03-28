@@ -3,6 +3,8 @@ import { PRIZE_POOL, ENTRY_FEE,
   FINAL_MATCHES 
 } from '../data/prize';
 
+import { PLAYERS } from '../data/players';
+
 export const calculateNetTotalForPlayer = (matchData, playerId) => {
   if (!Array.isArray(matchData) || !playerId) return 0;
 
@@ -96,4 +98,21 @@ export const calculatePerMatchPlayerTotal = (matchData, playerIds) => {
     result[playerId] = playerWinningTotaArray;
   });
   return result;
+};
+
+export const calculateTotalPlayerWinning = (matchData, playerIds) => {
+  if (!Array.isArray(matchData) || !Array.isArray(playerIds)) return 0;
+  let playerNetTotals = [];
+  
+  playerIds.forEach((playerId) => { 
+    const netTotal = calculateNetTotalForPlayer(matchData, playerId);
+    const playerName = PLAYERS.find(player => player.id === playerId)?.name;
+    playerNetTotals.push({ 
+      name: playerName || 'Unknown', 
+      prizeWon : netTotal || 0,
+      playerId: playerId,
+    });
+  });
+
+  return playerNetTotals;
 };
