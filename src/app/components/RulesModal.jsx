@@ -3,12 +3,7 @@ import { X, Trophy } from 'lucide-react';
 
 import { rules } from '../data/rules';
 
-interface RulesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export function RulesModal({ isOpen, onClose }: RulesModalProps) {
+export function RulesModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (

@@ -149,14 +149,13 @@ export default function App() {
         {/* Header */}
         <Header
           isLoading={isLoading}
-          completedMatches={rawMatchData.length}
         />
 
         {/* Stats Cards */}
         <StatsOverview  />
 
         {/* Leaderboard Table */}
-        {/* <LeaderboardTable players={playerData} /> */}
+        {/* <LeaderboardTable /> */}
 
         {/* Trend Graph */}
         <TrendGraph />

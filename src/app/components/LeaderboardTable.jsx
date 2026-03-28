@@ -2,30 +2,14 @@ import { Trophy, TrendingUp, TrendingDown, Flame, Sparkles, ChevronDown, Award, 
 import { PlayerAvatar } from './PlayerAvatar';
 import { useState } from 'react';
 
-interface PlayerData {
-  name: string;
-  totalMatches: number;
-  matchesPlayed: number;
-  prizeWon: number;
-  lastMatchWin?: number;
-  streak?: number;
-  winRate?: number;
-  bestMatch?: number;
-  avgPerMatch?: number;
-  recentForm?: number[]; // Last 3-5 matches results
-}
 
-interface LeaderboardTableProps {
-  players: PlayerData[];
-}
-
-export function LeaderboardTable({ players }: LeaderboardTableProps) {
-  const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
+export function LeaderboardTable() {
+  const [expandedPlayer, setExpandedPlayer] = useState(null);
   
   // Sort by prize won (descending)
   const sortedPlayers = [...players].sort((a, b) => b.prizeWon - a.prizeWon);
 
-  const getStreakIcon = (streak: number | undefined) => {
+  const getStreakIcon = (streak) => {
     if (!streak) return null;
     if (Math.abs(streak) >= 3) {
       return streak > 0 ? (
@@ -43,7 +27,7 @@ export function LeaderboardTable({ players }: LeaderboardTableProps) {
     return null;
   };
 
-  const getRecentFormIndicator = (recentForm: number[] | undefined) => {
+  const getRecentFormIndicator = (recentForm) => {
     if (!recentForm || recentForm.length === 0) return null;
     
     return (
@@ -64,7 +48,7 @@ export function LeaderboardTable({ players }: LeaderboardTableProps) {
     );
   };
 
-  const toggleExpand = (playerName: string) => {
+  const toggleExpand = (playerName) => {
     setExpandedPlayer(expandedPlayer === playerName ? null : playerName);
   };
 

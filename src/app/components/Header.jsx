@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Trophy, Info } from 'lucide-react';
 import { RulesModal } from './RulesModal';
+import { useMatchData } from '../MatchDataContext';
 
-export function Header({ isLoading, completedMatches }) {
+export function Header({ isLoading }) {
+    const { rawMatchData } = useMatchData();
     const [isRulesOpen, setIsRulesOpen] = useState(false);
 
     return (
@@ -31,7 +33,7 @@ export function Header({ isLoading, completedMatches }) {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
-                <span className="font-semibold">{isLoading ? 'Loading matches...' : `Match ${completedMatches}`}</span>
+                <span className="font-semibold">{isLoading ? 'Loading matches...' : `Match ${rawMatchData.length}`}</span>
                 <span>of 75 completed</span>
                 </p>
                 </div>

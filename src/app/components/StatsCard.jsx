@@ -1,13 +1,4 @@
-interface StatsCardProps {
-  label: string;
-  value: string;
-  subtext?: string;
-  icon: React.ReactNode;
-  gradient: string;
-  delay?: number;
-}
-
-export function StatsCard({ label, value, subtext, icon, gradient, delay = 0 }: StatsCardProps) {
+export function StatsCard({ label, value, subtext, icon, gradient, delay = 0 }) {
   return (
     <div
       className="bg-white/10 backdrop-blur-lg rounded-xl p-4 shadow-xl border border-white/20 relative overflow-hidden transition-all hover:scale-105 active:scale-95 cursor-pointer"
