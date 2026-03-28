@@ -142,38 +142,6 @@ export default function App() {
         }} />
       </div>
 
-      {/* Add keyframe animations */}
-      <style>{`
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes pulse-glow {
-          0%, 100% {
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-          }
-          50% {
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-          }
-        }
-        @keyframes live-pulse {
-          0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            transform: scale(1.05);
-          }
-        }
-      `}</style>
-
       {/* Mobile-centric container */}
       <div className="w-full max-w-md min-h-screen p-4 space-y-4 pb-20 relative z-10">
         {/* Header */}
@@ -194,7 +162,7 @@ export default function App() {
             <Trophy className="text-yellow-400 drop-shadow-lg" size={36} />
             <h1 className="text-3xl font-bold text-white drop-shadow-lg">IPL Fantasy</h1>
           </div>
-          <p className="text-blue-200 text-sm">League Dashboard 2025</p>
+          <p className="text-blue-200 text-sm">League Dashboard 2026</p>
           <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 inline-block border border-white/20">
             <p className="text-white text-xs flex flex-col sm:flex-row items-center sm:gap-2 justify-center">
               <span className="relative flex h-2 w-2">
