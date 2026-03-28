@@ -36,11 +36,11 @@ export async function fetchTournamentMatches(): Promise<AuthoritativeTournamentM
     }
 
     return body.map((item: any, idx: number) => ({
-      match: String(item?.match || `Match ${idx + 1}`),
-      number: Number(item?.number ?? idx + 1),
+      match: String(item?.match),
+      number: Number(item?.number),
       played: Array.isArray(item?.played) ? item.played.filter((x: any) => typeof x === 'string') : [],
-      result: item?.result && typeof item.result === 'object' && !Array.isArray(item.result) ? item.result : {},
-      winner: String(item?.winner ?? ''),
+      result: item?.result && typeof item.result === 'object' ? item.result : {},
+      winner: String(item?.winner),
     }));
   } finally {
     clearTimeout(timeout);

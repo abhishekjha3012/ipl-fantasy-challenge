@@ -1,7 +1,9 @@
 import { LeaderboardTable } from './components/LeaderboardTable';
 import { TrendGraph } from './components/TrendGraph';
-import { StatsCard } from './components/StatsCard';
-import { RulesModal } from './components/RulesModal';import { Footer } from './components/Footer';import { Trophy, TrendingUp, TrendingDown, IndianRupee, Info } from 'lucide-react';
+import { StatsOverview } from './components/StatsOverview';
+import { RulesModal } from './components/RulesModal';
+import { Footer } from './components/Footer';
+import { Trophy, Info } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { PLAYERS, PlayerProfile } from './data/players';
 import { fetchTournamentMatches, normalizeTournamentMatchData } from './api/tournamentApi';
@@ -96,11 +98,6 @@ export default function App() {
 
   const playerData = generatePlayerData(matchData, PLAYERS);
 
-  // Calculate stats
-  const totalPrizePool = playerData.reduce((sum, p) => sum + Math.abs(p.prizeWon), 0);
-  const biggestWinner = playerData.reduce((max, p) => p.prizeWon > max.prizeWon ? p : max, playerData[0] || { prizeWon: 0, name: 'N/A' });
-  const biggestLoser = playerData.reduce((min, p) => p.prizeWon < min.prizeWon ? p : min, playerData[0] || { prizeWon: 0, name: 'N/A' });
-
   const totalMatches = matchData.length;
   const completedMatches = totalMatches > 0 ? totalMatches : 0;
 
@@ -176,34 +173,7 @@ export default function App() {
         </div>
 
         {/* Stats Cards */}
-        <div 
-          className="grid grid-cols-3 gap-2"
-          style={{ animation: 'slideUp 0.6s ease-out 0.1s both' }}
-        >
-          <StatsCard
-            label="Prize Pool"
-            value={`₹${(totalPrizePool / 1000).toFixed(0)}k`}
-            icon={<IndianRupee size={18} className="text-purple-400" />}
-            gradient="bg-gradient-to-br from-purple-500 to-pink-500"
-            delay={0.1}
-          />
-          <StatsCard
-            label="First"
-            value={`₹${(biggestWinner.prizeWon / 1000).toFixed(1)}k`}
-            subtext={biggestWinner.name.split(' ')[0]}
-            icon={<TrendingUp size={18} className="text-green-400" />}
-            gradient="bg-gradient-to-br from-green-500 to-emerald-500"
-            delay={0.15}
-          />
-          <StatsCard
-            label="Last"
-            value={`₹${Math.abs(biggestLoser.prizeWon / 1000).toFixed(1)}k`}
-            subtext={biggestLoser.name.split(' ')[0]}
-            icon={<TrendingDown size={18} className="text-red-400" />}
-            gradient="bg-gradient-to-br from-red-500 to-orange-500"
-            delay={0.2}
-          />
-        </div>
+        <StatsOverview playerData={playerData} />
 
         {/* Leaderboard Table */}
         <LeaderboardTable players={playerData} />
