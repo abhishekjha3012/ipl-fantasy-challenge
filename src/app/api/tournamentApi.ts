@@ -11,7 +11,7 @@ export interface MatchData {
   [playerId: string]: number;
 }
 
-const NPOINT_URL = 'https://api.npoint.io/9e9b4019fec4946a0f9a';
+const NPOINT_URL = 'https://api.npoint.io/1941bdc1e76382a20072';
 
 export async function fetchTournamentMatches(): Promise<AuthoritativeTournamentMatch[]> {
   const controller = new AbortController();

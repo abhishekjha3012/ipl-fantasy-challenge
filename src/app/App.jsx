@@ -2,13 +2,13 @@ import { LeaderboardTable } from './components/LeaderboardTable';
 import { TrendGraph } from './components/TrendGraph';
 import { StatsOverview } from './components/StatsOverview';
 import { Header } from './components/Header';
-
 import { Footer } from './components/Footer';
 import { useState, useEffect, useMemo } from 'react';
-import { PLAYERS } from './data/players';
 import { fetchTournamentMatches } from './api/tournamentApi';
-import { extractPlayerDetailByKey } from './utils/app';
-import { createStatsCardData } from './utils/statOverview';
+import { useMatchData } from './MatchDataContext';
+import { calculatePerMatchPlayerWinning, calculatePerMatchPlayerTotal, extractPlayerDetailByKey } from './utils/app';
+import { PLAYERS } from './data/players';
+import { INITIAL_PLAYER_TOTALS } from './data/emptyData';
 
 // Generate mock match-by-match data (10 matches so far)
 // const generateMatchData = (playerNames: string[]) => {
@@ -75,29 +75,21 @@ import { createStatsCardData } from './utils/statOverview';
 // };
 
 export default function App() {
-  
-  const [rawMatchData, setRawMatchData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ error, setError ] = useState(null);
 
   const playerIds = useMemo(() => 
     extractPlayerDetailByKey(PLAYERS, 'id'),
   [PLAYERS]);
 
-  const statsCardData = useMemo(() => {
-    if (rawMatchData.length > 0) {
-      return createStatsCardData(rawMatchData, playerIds);
-    }
-    return  {
-      totalPrizePool: 0,
-      biggestWinner: { name: 'N/A', prizeWon: 0 },
-      biggestLoser: { name: 'N/A', prizeWon: 0 },
-    };
-  }, [rawMatchData]);
-
+  const { rawMatchData, 
+    setRawMatchData, 
+    setPerMatchPlayerWinning, 
+    setPerMatchPlayerTotal 
+  } = useMatchData();
+  
   useEffect(() => {
     let alive = true;
-
     const loadData = async () => {
       setIsLoading(true);
       setError(null);
@@ -114,13 +106,30 @@ export default function App() {
         if (alive) setIsLoading(false);
       }
     };
-
     loadData();
 
     return () => {
       alive = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (rawMatchData.length > 0) {  
+      const perMatchPlayerWinning = calculatePerMatchPlayerWinning(rawMatchData, playerIds);
+      setPerMatchPlayerWinning(perMatchPlayerWinning);
+    } else {
+      setPerMatchPlayerWinning(INITIAL_PLAYER_TOTALS);
+    }
+  }, [rawMatchData]);
+
+   useEffect(() => {
+    if (rawMatchData.length > 0) {
+      const perMatchPlayerTotal = calculatePerMatchPlayerTotal(rawMatchData, playerIds);
+      setPerMatchPlayerTotal(perMatchPlayerTotal);
+    } else {
+      setPerMatchPlayerTotal(INITIAL_PLAYER_TOTALS);
+    }
+  }, [rawMatchData]);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex justify-center overflow-auto relative">
@@ -144,7 +153,7 @@ export default function App() {
         />
 
         {/* Stats Cards */}
-        <StatsOverview statsCardData={statsCardData} />
+        <StatsOverview  />
 
         {/* Leaderboard Table */}
         {/* <LeaderboardTable players={playerData} /> */}

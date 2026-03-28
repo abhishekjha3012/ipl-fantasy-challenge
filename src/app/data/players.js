@@ -82,21 +82,21 @@ export const PLAYERS = [
     color: "#03AA78",
     imageAddress: "",
   },
-  {
-    name: "Neha",
-    nickName: "Chanakya Cheetah",
-    id: "NPJ",
-    num: 10,
-    color: "#66EE51",
-    imageAddress: "",
-  },
-  {
-    name: "Jaya",
-    nickName: "Ponga Pandit",
-    id: "JJ",
-    num: 11,
-    color: "#7D8421",
-    imageAddress: "",
-  },
+  // {
+  //   name: "Neha",
+  //   nickName: "Chanakya Cheetah",
+  //   id: "NPJ",
+  //   num: 10,
+  //   color: "#66EE51",
+  //   imageAddress: "",
+  // },
+  // {
+  //   name: "Jaya",
+  //   nickName: "Ponga Pandit",
+  //   id: "JJ",
+  //   num: 11,
+  //   color: "#7D8421",
+  //   imageAddress: "",
+  // },
 ];
 

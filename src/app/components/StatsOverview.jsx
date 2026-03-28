@@ -1,7 +1,26 @@
+import { useMemo } from 'react';
 import { TrendingUp, TrendingDown, IndianRupee } from 'lucide-react';
 import { StatsCard } from './StatsCard';
+import { useMatchData } from '../MatchDataContext';
+import { createStatsCardData } from '../utils/statOverview';
+import { extractPlayerDetailByKey } from '../utils/app';
+import { PLAYERS } from '../data/players';
+import { EMPTY_STAT_CARD_DATA } from '../data/emptyData';
 
-export function StatsOverview({ statsCardData }) {
+export function StatsOverview() {
+  const { rawMatchData } = useMatchData();
+
+  const playerIds = useMemo(() => 
+    extractPlayerDetailByKey(PLAYERS, 'id'),
+  [PLAYERS]);
+
+  const statsCardData = useMemo(() => {
+    if (rawMatchData.length > 0) {
+      return createStatsCardData(rawMatchData, playerIds);
+    }
+    return EMPTY_STAT_CARD_DATA;
+  }, [rawMatchData]);
+
   return (
     <div
       className="grid grid-cols-3 gap-2"
