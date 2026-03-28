@@ -3,76 +3,15 @@ import { TrendGraph } from './components/TrendGraph';
 import { StatsOverview } from './components/StatsOverview';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, use } from 'react';
 import { fetchTournamentMatches } from './api/tournamentApi';
 import { useMatchData } from './MatchDataContext';
-import { calculatePerMatchPlayerWinning, calculatePerMatchPlayerTotal, extractPlayerDetailByKey } from './utils/app';
+import { calculatePerMatchPlayerTotal, 
+  extractPlayerDetailByKey, calculateTotalPlayerWinning,
+  calculatePerMatchPlayeWinningMinusEntryFee,
+} from './utils/app';
 import { PLAYERS } from './data/players';
 import { INITIAL_PLAYER_TOTALS } from './data/emptyData';
-
-// Generate mock match-by-match data (10 matches so far)
-// const generateMatchData = (playerNames: string[]) => {
-//   const matchData: any[] = [];
-
-//   for (let match = 1; match <= 10; match++) {
-//     const matchEntry: any = { match };
-
-//     playerNames.forEach(player => {
-//       // Random win/loss between -3000 to +5000 per match
-//       const result = Math.floor(Math.random() * 8000) - 3000;
-//       matchEntry[player] = result;
-//     });
-
-//     matchData.push(matchEntry);
-//   }
-
-//   return matchData;
-// };
-
-// Calculate winning/losing streaks
-// const calculateStreak = (matchData: any[], playerName: string): number => {
-//   let streak = 0;
-//   for (let i = matchData.length - 1; i >= 0; i--) {
-//     const result = matchData[i][playerName];
-//     if (streak === 0) {
-//       streak = result > 0 ? 1 : result < 0 ? -1 : 0;
-//     } else if ((streak > 0 && result > 0) || (streak < 0 && result < 0)) {
-//       streak = streak > 0 ? streak + 1 : streak - 1;
-//     } else {
-//       break;
-//     }
-//   }
-//   return streak;
-// };
-
-// Generate mock data for leaderboard table
-// const generatePlayerData = (matchData: any[], players: (string | PlayerProfile)[]) => {
-//   const playerNames = extractPlayerNames(players, 'name);
-
-//   return playerNames.map(name => {
-//     const prizeWon = matchData.reduce((sum, match) => sum + (match[name] || 0), 0);
-//     const lastMatchWin = matchData[matchData.length - 1]?.[name] || 0;
-//     const streak = calculateStreak(matchData, name);
-//     const wins = matchData.filter(match => match[name] > 0).length;
-//     const winRate = matchData.length > 0 ? Math.round((wins / matchData.length) * 100) : 0;
-//     const bestMatch = Math.max(...matchData.map(match => match[name] || 0));
-//     const avgPerMatch = matchData.length > 0 ? Math.round(prizeWon / matchData.length) : 0;
-//     const recentForm = matchData.slice(-5).map(match => match[name]);
-
-//     return {
-//       name,
-//       totalMatches: matchData.length,
-//       matchesPlayed: Math.min(matchData.length, Math.max(0, Math.floor(Math.random() * matchData.length) + 1)),
-//       prizeWon,
-//       lastMatchWin,
-//       streak,
-//       winRate,
-//       bestMatch,
-//       avgPerMatch,
-//       recentForm,
-//     };
-//   });
-// };
 
 export default function App() {
   const [ isLoading, setIsLoading ] = useState(false);
@@ -84,8 +23,9 @@ export default function App() {
 
   const { rawMatchData, 
     setRawMatchData, 
-    setPerMatchPlayerWinning, 
-    setPerMatchPlayerTotal 
+    setPerMatchPlayerTotal,
+    setOverallPlayerTotal,
+    setPerMatchPlayerWinningMinusFee,
   } = useMatchData();
   
   useEffect(() => {
@@ -113,15 +53,6 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-    if (rawMatchData.length > 0) {  
-      const perMatchPlayerWinning = calculatePerMatchPlayerWinning(rawMatchData, playerIds);
-      setPerMatchPlayerWinning(perMatchPlayerWinning);
-    } else {
-      setPerMatchPlayerWinning(INITIAL_PLAYER_TOTALS);
-    }
-  }, [rawMatchData]);
-
    useEffect(() => {
     if (rawMatchData.length > 0) {
       const perMatchPlayerTotal = calculatePerMatchPlayerTotal(rawMatchData, playerIds);
@@ -130,6 +61,25 @@ export default function App() {
       setPerMatchPlayerTotal(INITIAL_PLAYER_TOTALS);
     }
   }, [rawMatchData]);
+
+  useEffect(() => {
+    if (rawMatchData.length > 0) {
+      const totalPlayerWinning = calculateTotalPlayerWinning(rawMatchData, playerIds);
+      setOverallPlayerTotal(totalPlayerWinning);
+    } else {
+      setOverallPlayerTotal([]);
+    }
+  }, [rawMatchData]);
+
+  useEffect(() => {
+    if (rawMatchData.length > 0) {
+      const perMatchPlayerWinningMinusEntryFee = calculatePerMatchPlayeWinningMinusEntryFee(rawMatchData, playerIds);
+      setPerMatchPlayerWinningMinusFee(perMatchPlayerWinningMinusEntryFee);
+    } else {
+      setPerMatchPlayerWinningMinusFee(INITIAL_PLAYER_TOTALS);
+    }
+  }, [rawMatchData]);
+
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex justify-center overflow-auto relative">
@@ -155,7 +105,7 @@ export default function App() {
         <StatsOverview  />
 
         {/* Leaderboard Table */}
-        {/* <LeaderboardTable /> */}
+        <LeaderboardTable />
 
         {/* Trend Graph */}
         <TrendGraph />
