@@ -5,9 +5,10 @@ import { Header } from './components/Header';
 
 import { Footer } from './components/Footer';
 import { useState, useEffect, useMemo } from 'react';
-import { PLAYERS, PlayerProfile } from './data/players';
+import { PLAYERS } from './data/players';
 import { fetchTournamentMatches } from './api/tournamentApi';
-import { extractPlayerNames, createStatsCardData } from './utils/app';
+import { extractPlayerDetailByKey } from './utils/app';
+import { createStatsCardData } from './utils/statOverview';
 
 // Generate mock match-by-match data (10 matches so far)
 // const generateMatchData = (playerNames: string[]) => {
@@ -46,7 +47,7 @@ import { extractPlayerNames, createStatsCardData } from './utils/app';
 
 // Generate mock data for leaderboard table
 // const generatePlayerData = (matchData: any[], players: (string | PlayerProfile)[]) => {
-//   const playerNames = extractPlayerNames(players);
+//   const playerNames = extractPlayerNames(players, 'name);
 
 //   return playerNames.map(name => {
 //     const prizeWon = matchData.reduce((sum, match) => sum + (match[name] || 0), 0);
@@ -75,19 +76,23 @@ import { extractPlayerNames, createStatsCardData } from './utils/app';
 
 export default function App() {
   
-  const [rawMatchData, setRawMatchData] = useState<any[]>([]);
+  const [rawMatchData, setRawMatchData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
-  const playerNames = useMemo(() => 
-    extractPlayerNames(PLAYERS),
+  const playerIds = useMemo(() => 
+    extractPlayerDetailByKey(PLAYERS, 'id'),
   [PLAYERS]);
 
   const statsCardData = useMemo(() => {
     if (rawMatchData.length > 0) {
-      return createStatsCardData(rawMatchData, playerNames);
+      return createStatsCardData(rawMatchData, playerIds);
     }
-    return {};
+    return  {
+      totalPrizePool: 0,
+      biggestWinner: { name: 'N/A', prizeWon: 0 },
+      biggestLoser: { name: 'N/A', prizeWon: 0 },
+    };
   }, [rawMatchData]);
 
   useEffect(() => {
@@ -139,7 +144,7 @@ export default function App() {
         />
 
         {/* Stats Cards */}
-        {/* <StatsOverview statsCardData={statsCardData} /> */}
+        <StatsOverview statsCardData={statsCardData} />
 
         {/* Leaderboard Table */}
         {/* <LeaderboardTable players={playerData} /> */}

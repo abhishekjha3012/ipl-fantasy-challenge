@@ -2,10 +2,6 @@ import { TrendingUp, TrendingDown, IndianRupee } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 
 export function StatsOverview({ statsCardData }) {
-  const totalPrizePool = statsCardData.reduce((sum, p) => sum + Math.abs(p.prizeWon), 0);
-  const biggestWinner = statsCardData.reduce((max, p) => p.prizeWon > max.prizeWon ? p : max, statsCardData[0] || { prizeWon: 0, name: 'N/A' });
-  const biggestLoser = statsCardData.reduce((min, p) => p.prizeWon < min.prizeWon ? p : min, statsCardData[0] || { prizeWon: 0, name: 'N/A' });
-
   return (
     <div
       className="grid grid-cols-3 gap-2"
@@ -13,23 +9,23 @@ export function StatsOverview({ statsCardData }) {
     >
       <StatsCard
         label="Prize Pool"
-        value={`₹${(totalPrizePool / 1000).toFixed(0)}k`}
+        value={`₹${(statsCardData?.totalPrizePool || 0).toFixed(0)}`}
         icon={<IndianRupee size={18} className="text-purple-400" />}
         gradient="bg-gradient-to-br from-purple-500 to-pink-500"
         delay={0.1}
       />
       <StatsCard
         label="First"
-        value={`₹${(biggestWinner.prizeWon / 1000).toFixed(1)}k`}
-        subtext={biggestWinner.name?.split(' ')[0] || 'N/A'}
+        value={`₹${(statsCardData?.biggestWinner?.prizeWon|| 0).toFixed(0)}`}
+        subtext={statsCardData?.biggestWinner?.name}
         icon={<TrendingUp size={18} className="text-green-400" />}
         gradient="bg-gradient-to-br from-green-500 to-emerald-500"
         delay={0.15}
       />
       <StatsCard
         label="Last"
-        value={`₹${Math.abs(biggestLoser.prizeWon / 1000).toFixed(1)}k`}
-        subtext={biggestLoser.name?.split(' ')[0] || 'N/A'}
+        value={`₹${Math.abs(statsCardData?.biggestLoser?.prizeWon || 0).toFixed(0)}`}
+        subtext={statsCardData?.biggestLoser?.name}
         icon={<TrendingDown size={18} className="text-red-400" />}
         gradient="bg-gradient-to-br from-red-500 to-orange-500"
         delay={0.2}

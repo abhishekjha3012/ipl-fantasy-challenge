@@ -1,5 +1,5 @@
 
-const teamArray = [
+export const teamArray = [
     {name: 'RCB', id:'rcb'},
     {name: 'CSK', id:'csk'},
     {name: 'KKR', id:'kkr'},
