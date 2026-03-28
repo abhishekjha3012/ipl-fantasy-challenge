@@ -3,8 +3,9 @@ import { TrendGraph } from './components/TrendGraph';
 import { StatsCard } from './components/StatsCard';
 import { RulesModal } from './components/RulesModal';
 import { Trophy, TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { PLAYERS, PlayerProfile } from './data/players';
+import { fetchTournamentMatches, normalizeTournamentMatchData } from './api/tournamentApi';
 
 const extractPlayerNames = (players: (string | PlayerProfile)[]): string[] => {
   if (!Array.isArray(players)) return [];
@@ -66,8 +67,8 @@ const generatePlayerData = (matchData: any[], players: (string | PlayerProfile)[
 
     return {
       name,
-      totalMatches: 15,
-      matchesPlayed: Math.floor(Math.random() * 3) + 8,
+      totalMatches: matchData.length,
+      matchesPlayed: Math.min(matchData.length, Math.max(0, Math.floor(Math.random() * matchData.length) + 1)),
       prizeWon,
       lastMatchWin,
       streak,
@@ -81,15 +82,55 @@ const generatePlayerData = (matchData: any[], players: (string | PlayerProfile)[
 
 export default function App() {
   const [isRulesOpen, setIsRulesOpen] = useState(false);
+  const [rawMatchData, setRawMatchData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const playerNames = extractPlayerNames(PLAYERS);
-  const matchData = generateMatchData(playerNames);
+
+  const matchData = useMemo(() => {
+    if (rawMatchData.length > 0) {
+      return normalizeTournamentMatchData(rawMatchData, playerNames);
+    }
+    return generateMatchData(playerNames);
+  }, [rawMatchData, playerNames]);
+
   const playerData = generatePlayerData(matchData, PLAYERS);
 
   // Calculate stats
   const totalPrizePool = playerData.reduce((sum, p) => sum + Math.abs(p.prizeWon), 0);
-  const biggestWinner = playerData.reduce((max, p) => p.prizeWon > max.prizeWon ? p : max);
-  const biggestLoser = playerData.reduce((min, p) => p.prizeWon < min.prizeWon ? p : min);
+  const biggestWinner = playerData.reduce((max, p) => p.prizeWon > max.prizeWon ? p : max, playerData[0] || { prizeWon: 0, name: 'N/A' });
+  const biggestLoser = playerData.reduce((min, p) => p.prizeWon < min.prizeWon ? p : min, playerData[0] || { prizeWon: 0, name: 'N/A' });
+
+  const totalMatches = matchData.length;
+  const completedMatches = totalMatches > 0 ? totalMatches : 0;
+
+  useEffect(() => {
+    let alive = true;
+
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const data = await fetchTournamentMatches();
+        if (alive && Array.isArray(data)) {
+          setRawMatchData(data);
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        setError(`Could not load tournament results: ${message}`);
+      } finally {
+        if (alive) setIsLoading(false);
+      }
+    };
+
+    loadData();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex justify-center overflow-auto relative">
@@ -155,13 +196,15 @@ export default function App() {
           </div>
           <p className="text-blue-200 text-sm">League Dashboard 2025</p>
           <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 inline-block border border-white/20">
-            <p className="text-white text-xs flex items-center gap-2 justify-center">
+            <p className="text-white text-xs flex flex-col sm:flex-row items-center sm:gap-2 justify-center">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
-              <span className="font-semibold">Match 10</span> of 15 completed
+              <span className="font-semibold">{isLoading ? 'Loading matches...' : `Match ${completedMatches}`}</span>
+              <span>of {totalMatches} completed</span>
             </p>
+            {error && <p className="text-red-300 text-xs mt-1">{error} (using fallback generated data)</p>}
           </div>
         </div>
 
