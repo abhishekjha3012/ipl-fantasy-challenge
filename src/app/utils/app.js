@@ -9,10 +9,9 @@ export const calculateNetTotalForPlayer = (matchData, playerId) => {
   if (!Array.isArray(matchData) || !playerId) return 0;
 
   return matchData.reduce((acc, match) => {
-    const playedLength = Number(match.played?.length);
-    const prizeArray = PRIZE_POOL[playedLength];
-    const position = match.result?.[playerId];
-    return acc + (prizeArray[position] ?? 0);
+    const winningAmount = extractWinningAmountForPlayerInMatch(match, playerId);
+    const entryFee = extractEntryFeeForPlayerInMatch(match, playerId);
+    return acc + (winningAmount ?? 0) - entryFee;
   }, 0);
 };
 
@@ -53,20 +52,6 @@ const extractEntryFeeForPlayerInMatch = (match, playerId) => {
   const entryFee = ENTRY_FEE[matchType];
   return entryFee;
 }
-
-export const calculatePerMatchPlayerWinning = (matchData, playerIds) => {
-  if (!Array.isArray(matchData) || !Array.isArray(playerIds)) return 0;
-  let result = {};
-  playerIds.forEach((playerId) => {
-    const playerWinningArray = [];
-    matchData.forEach((match) => {
-      const winningAmount = extractWinningAmountForPlayerInMatch(match, playerId);
-      playerWinningArray.push(winningAmount ?? 0);
-    });
-    result[playerId] = playerWinningArray;
-  });
-  return result;
-};
 
 export const calculatePerMatchPlayeWinningMinusEntryFee = (matchData, playerIds) => {
   if (!Array.isArray(matchData) || !Array.isArray(playerIds)) return 0;

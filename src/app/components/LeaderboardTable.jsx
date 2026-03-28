@@ -9,11 +9,13 @@ import { getMatchesPlayed, findBestMatch, findAvgPerMatch} from '../utils/leader
 
 export function LeaderboardTable() {
   const { rawMatchData, perMatchPlayerTotal, overallPlayerTotal, 
-    perMatchPlayerWinning, perMatchPlayerWinningMinusFee } = useMatchData();
+    perMatchPlayerWinningMinusFee } = useMatchData();
   const [expandedPlayer, setExpandedPlayer] = useState(null);
   
   // Sort by prize won (descending)
   const sortedPlayers = useMemo(() => {
+    // perMatchPlayerWinningMinusFee is an object with playerId as key and array of winnings minus fee as value
+    
     return overallPlayerTotal.sort((a, b) => b.prizeWon - a.prizeWon);
   }, [overallPlayerTotal]);
 
@@ -48,7 +50,7 @@ export function LeaderboardTable() {
     const totalMatches = rawMatchData.length || 0;
     if(totalMatches === 0) return 0;
     const id = player.playerId;
-    const matchesWon = perMatchPlayerWinning[id]?.filter(win => win > 0).length || 0;
+    const matchesWon = perMatchPlayerWinningMinusFee[id]?.filter(win => win > 0).length || 0;
     return Math.round((matchesWon / totalMatches) * 100) || 0;
   };
 

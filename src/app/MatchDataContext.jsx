@@ -12,7 +12,6 @@ export const useMatchData = () => {
 
 export const MatchDataProvider = ({ children }) => {
   const [ rawMatchData, setRawMatchData ] = useState([]);
-  const [ perMatchPlayerWinning, setPerMatchPlayerWinning ] = useState([]);
   const [ perMatchPlayerTotal, setPerMatchPlayerTotal ] = useState([]);
   const [ overallPlayerTotal, setOverallPlayerTotal ] = useState([]);
   const [ perMatchPlayerWinningMinusFee, setPerMatchPlayerWinningMinusFee ] = useState([]);   
@@ -20,8 +19,6 @@ export const MatchDataProvider = ({ children }) => {
   const value = useMemo(() => ({
     rawMatchData,
     setRawMatchData,
-    perMatchPlayerWinning,
-    setPerMatchPlayerWinning,
     perMatchPlayerTotal,
     setPerMatchPlayerTotal,
     overallPlayerTotal,
@@ -29,7 +26,7 @@ export const MatchDataProvider = ({ children }) => {
     perMatchPlayerWinningMinusFee,
     setPerMatchPlayerWinningMinusFee,
   }), [
-    rawMatchData, perMatchPlayerWinning, 
+    rawMatchData, 
     perMatchPlayerTotal, overallPlayerTotal, 
     perMatchPlayerWinningMinusFee
 ]);

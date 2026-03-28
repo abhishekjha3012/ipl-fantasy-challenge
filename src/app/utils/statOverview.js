@@ -22,7 +22,7 @@ export const createStatsCardData = (matchData, playerIds) => {
   const sortedByNetTotal = playerNetTotals.sort((a, b) => b.prizeWon - a.prizeWon);
 
   statsCardData.totalPrizePool = sortedByNetTotal.reduce((sum, player) => 
-    sum + Math.abs(player.prizeWon), 0);
+    sum + player.prizeWon, 0);
   statsCardData.biggestWinner = sortedByNetTotal[0];
   statsCardData.biggestLoser = sortedByNetTotal[sortedByNetTotal.length - 1];
 
