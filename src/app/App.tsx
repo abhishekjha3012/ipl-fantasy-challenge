@@ -1,0 +1,235 @@
+import { LeaderboardTable } from './components/LeaderboardTable';
+import { TrendGraph } from './components/TrendGraph';
+import { StatsCard } from './components/StatsCard';
+import { RulesModal } from './components/RulesModal';
+import { Trophy, TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
+import { useState } from 'react';
+
+// Mock data for 12 players
+const PLAYERS = [
+  'Rahul Sharma',
+  'Priya Patel',
+  'Amit Kumar',
+  'Sneha Reddy',
+  'Vikram Singh',
+  'Anjali Gupta',
+  'Rohan Mehta',
+  'Pooja Desai',
+  'Arjun Nair',
+  'Neha Joshi',
+  'Karan Malhotra',
+  'Divya Iyer'
+];
+
+// Generate mock match-by-match data (10 matches so far)
+const generateMatchData = () => {
+  const matchData = [];
+  
+  for (let match = 1; match <= 10; match++) {
+    const matchEntry: any = { match };
+    
+    PLAYERS.forEach(player => {
+      // Random win/loss between -3000 to +5000 per match
+      const result = Math.floor(Math.random() * 8000) - 3000;
+      matchEntry[player] = result;
+    });
+    
+    matchData.push(matchEntry);
+  }
+  
+  return matchData;
+};
+
+// Calculate winning/losing streaks
+const calculateStreak = (matchData: any[], playerName: string): number => {
+  let streak = 0;
+  for (let i = matchData.length - 1; i >= 0; i--) {
+    const result = matchData[i][playerName];
+    if (streak === 0) {
+      streak = result > 0 ? 1 : result < 0 ? -1 : 0;
+    } else if ((streak > 0 && result > 0) || (streak < 0 && result < 0)) {
+      streak = streak > 0 ? streak + 1 : streak - 1;
+    } else {
+      break;
+    }
+  }
+  return streak;
+};
+
+// Generate mock data for leaderboard table
+const generatePlayerData = (matchData: any[]) => {
+  return PLAYERS.map(name => {
+    // Calculate total prize won
+    const prizeWon = matchData.reduce((sum, match) => sum + (match[name] || 0), 0);
+    
+    // Get last match result
+    const lastMatchWin = matchData[matchData.length - 1][name];
+    
+    // Calculate streak
+    const streak = calculateStreak(matchData, name);
+    
+    // Calculate win rate
+    const wins = matchData.filter(match => match[name] > 0).length;
+    const winRate = Math.round((wins / matchData.length) * 100);
+    
+    // Find best match
+    const bestMatch = Math.max(...matchData.map(match => match[name] || 0));
+    
+    // Calculate average per match
+    const avgPerMatch = Math.round(prizeWon / matchData.length);
+    
+    // Get recent form (last 5 matches)
+    const recentForm = matchData.slice(-5).map(match => match[name]);
+    
+    return {
+      name,
+      totalMatches: 15, // Total matches in the tournament
+      matchesPlayed: Math.floor(Math.random() * 3) + 8, // Between 8-10 matches played
+      prizeWon,
+      lastMatchWin,
+      streak,
+      winRate,
+      bestMatch,
+      avgPerMatch,
+      recentForm
+    };
+  });
+};
+
+export default function App() {
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
+  
+  const matchData = generateMatchData();
+  const playerData = generatePlayerData(matchData);
+
+  // Calculate stats
+  const totalPrizePool = playerData.reduce((sum, p) => sum + Math.abs(p.prizeWon), 0);
+  const biggestWinner = playerData.reduce((max, p) => p.prizeWon > max.prizeWon ? p : max);
+  const biggestLoser = playerData.reduce((min, p) => p.prizeWon < min.prizeWon ? p : min);
+
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex justify-center overflow-auto relative">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
+
+      {/* Add keyframe animations */}
+      <style>{`
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes pulse-glow {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+          }
+        }
+        @keyframes live-pulse {
+          0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: scale(1.05);
+          }
+        }
+      `}</style>
+
+      {/* Mobile-centric container */}
+      <div className="w-full max-w-md min-h-screen p-4 space-y-4 pb-20 relative z-10">
+        {/* Header */}
+        <div 
+          className="text-center pt-6 pb-2 relative"
+          style={{ animation: 'slideUp 0.6s ease-out 0s both' }}
+        >
+          {/* Info Icon - Top Right */}
+          <button
+            onClick={() => setIsRulesOpen(true)}
+            className="absolute top-6 right-0 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-full p-2 transition-all hover:scale-110 active:scale-95"
+            aria-label="View league rules"
+          >
+            <Info size={20} className="text-white" />
+          </button>
+
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Trophy className="text-yellow-400 drop-shadow-lg" size={36} />
+            <h1 className="text-3xl font-bold text-white drop-shadow-lg">IPL Fantasy</h1>
+          </div>
+          <p className="text-blue-200 text-sm">League Dashboard 2025</p>
+          <div className="mt-3 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 inline-block border border-white/20">
+            <p className="text-white text-xs flex items-center gap-2 justify-center">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              <span className="font-semibold">Match 10</span> of 15 completed
+            </p>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div 
+          className="grid grid-cols-3 gap-2"
+          style={{ animation: 'slideUp 0.6s ease-out 0.1s both' }}
+        >
+          <StatsCard
+            label="Prize Pool"
+            value={`₹${(totalPrizePool / 1000).toFixed(0)}k`}
+            icon={<DollarSign size={18} className="text-purple-400" />}
+            gradient="bg-gradient-to-br from-purple-500 to-pink-500"
+            delay={0.1}
+          />
+          <StatsCard
+            label="Top Winner"
+            value={`₹${(biggestWinner.prizeWon / 1000).toFixed(1)}k`}
+            subtext={biggestWinner.name.split(' ')[0]}
+            icon={<TrendingUp size={18} className="text-green-400" />}
+            gradient="bg-gradient-to-br from-green-500 to-emerald-500"
+            delay={0.15}
+          />
+          <StatsCard
+            label="Biggest Loss"
+            value={`₹${Math.abs(biggestLoser.prizeWon / 1000).toFixed(1)}k`}
+            subtext={biggestLoser.name.split(' ')[0]}
+            icon={<TrendingDown size={18} className="text-red-400" />}
+            gradient="bg-gradient-to-br from-red-500 to-orange-500"
+            delay={0.2}
+          />
+        </div>
+
+        {/* Leaderboard Table */}
+        <LeaderboardTable players={playerData} />
+
+        {/* Trend Graph */}
+        <TrendGraph matchData={matchData} playerNames={PLAYERS} />
+
+        {/* Footer */}
+        <div 
+          className="text-center pt-2 pb-2"
+          style={{ animation: 'slideUp 0.6s ease-out 1.2s both' }}
+        >
+          <p className="text-white/40 text-xs">
+            Updated live • IPL 2025 Season
+          </p>
+        </div>
+      </div>
+
+      {/* Rules Modal */}
+      <RulesModal isOpen={isRulesOpen} onClose={() => setIsRulesOpen(false)} />
+    </div>
+  );
+}
