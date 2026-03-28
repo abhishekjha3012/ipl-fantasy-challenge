@@ -1,10 +1,10 @@
 import { TrendingUp, TrendingDown, IndianRupee } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 
-export function StatsOverview({ playerData }) {
-  const totalPrizePool = playerData.reduce((sum, p) => sum + Math.abs(p.prizeWon), 0);
-  const biggestWinner = playerData.reduce((max, p) => p.prizeWon > max.prizeWon ? p : max, playerData[0] || { prizeWon: 0, name: 'N/A' });
-  const biggestLoser = playerData.reduce((min, p) => p.prizeWon < min.prizeWon ? p : min, playerData[0] || { prizeWon: 0, name: 'N/A' });
+export function StatsOverview({ statsCardData }) {
+  const totalPrizePool = statsCardData.reduce((sum, p) => sum + Math.abs(p.prizeWon), 0);
+  const biggestWinner = statsCardData.reduce((max, p) => p.prizeWon > max.prizeWon ? p : max, statsCardData[0] || { prizeWon: 0, name: 'N/A' });
+  const biggestLoser = statsCardData.reduce((min, p) => p.prizeWon < min.prizeWon ? p : min, statsCardData[0] || { prizeWon: 0, name: 'N/A' });
 
   return (
     <div

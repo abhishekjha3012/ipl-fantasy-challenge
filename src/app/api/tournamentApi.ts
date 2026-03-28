@@ -46,26 +46,3 @@ export async function fetchTournamentMatches(): Promise<AuthoritativeTournamentM
     clearTimeout(timeout);
   }
 }
-
-export function normalizeTournamentMatchData(
-  rawMatches: any[],
-  playerIds: string[]
-): MatchData[] {
-  if (!Array.isArray(rawMatches)) return [];
-
-  return rawMatches.map((item, index) => {
-    const matchNumber = Number(item?.number ?? item?.match ?? index + 1);
-    const resultRecord = (item?.result && typeof item.result === 'object' && !Array.isArray(item.result))
-      ? item.result
-      : {};
-
-    const normalized: MatchData = { match: Number.isFinite(matchNumber) ? matchNumber : index + 1 };
-
-    playerIds.forEach(pid => {
-      const value = resultRecord[pid];
-      normalized[pid] = typeof value === 'number' ? value : 0;
-    });
-
-    return normalized;
-  });
-}
