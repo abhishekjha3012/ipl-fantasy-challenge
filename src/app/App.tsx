@@ -1,8 +1,7 @@
 import { LeaderboardTable } from './components/LeaderboardTable';
 import { TrendGraph } from './components/TrendGraph';
 import { StatsCard } from './components/StatsCard';
-import { RulesModal } from './components/RulesModal';
-import { Trophy, TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
+import { RulesModal } from './components/RulesModal';import { Footer } from './components/Footer';import { Trophy, TrendingUp, TrendingDown, IndianRupee, Info } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { PLAYERS, PlayerProfile } from './data/players';
 import { fetchTournamentMatches, normalizeTournamentMatchData } from './api/tournamentApi';
@@ -184,12 +183,12 @@ export default function App() {
           <StatsCard
             label="Prize Pool"
             value={`₹${(totalPrizePool / 1000).toFixed(0)}k`}
-            icon={<DollarSign size={18} className="text-purple-400" />}
+            icon={<IndianRupee size={18} className="text-purple-400" />}
             gradient="bg-gradient-to-br from-purple-500 to-pink-500"
             delay={0.1}
           />
           <StatsCard
-            label="Top Winner"
+            label="First"
             value={`₹${(biggestWinner.prizeWon / 1000).toFixed(1)}k`}
             subtext={biggestWinner.name.split(' ')[0]}
             icon={<TrendingUp size={18} className="text-green-400" />}
@@ -197,7 +196,7 @@ export default function App() {
             delay={0.15}
           />
           <StatsCard
-            label="Biggest Loss"
+            label="Last"
             value={`₹${Math.abs(biggestLoser.prizeWon / 1000).toFixed(1)}k`}
             subtext={biggestLoser.name.split(' ')[0]}
             icon={<TrendingDown size={18} className="text-red-400" />}
@@ -213,14 +212,7 @@ export default function App() {
         <TrendGraph matchData={matchData} playerNames={playerNames} />
 
         {/* Footer */}
-        <div 
-          className="text-center pt-2 pb-2"
-          style={{ animation: 'slideUp 0.6s ease-out 1.2s both' }}
-        >
-          <p className="text-white/40 text-xs">
-            Updated live • IPL 2025 Season
-          </p>
-        </div>
+        <Footer />
       </div>
 
       {/* Rules Modal */}
