@@ -10,15 +10,35 @@ export function RulesModal({ isOpen, onClose }: RulesModalProps) {
   if (!isOpen) return null;
 
   const rules = [
-    "Entry fee is ₹500 per person for the entire IPL season",
-    "Prize distribution: 1st - 50%, 2nd - 30%, 3rd - 20% of total pool",
-    "Points are calculated based on actual player performance in IPL matches",
-    "Team selection must be done before each match deadline",
-    "Maximum 3 players from the same IPL team allowed",
-    "Captain gets 2x points, Vice-Captain gets 1.5x points",
-    "Transfers are limited to 2 per match week",
-    "Missed match selections result in 0 points for that match",
-    "Final standings will be determined after Match 15"
+    "1. Minimum 30 overs of game has to happen.",
+
+    "2. The match must have a result. (App should not indicate that the match" +
+    " was abandoned).",
+
+    "3. Big Win Rule" +
+    "\nIf Rank 1 wins by more than 100 points, Winner takes all the prize money.",
+
+    "4. Tie Rule" +
+    "\nIf Rank 1 and Rank 2 are tied, their winning amounts will be combined and" +
+    "shared equally. The winning amount for Rank 3 will remain unchanged.",
+
+    "5. Tie Rule" +
+    "\nIf Rank 2 and Rank 3 are tied, their winning amounts will be combined and" +
+    "shared equally. The winning amount for Rank 1 will remain unchanged.",
+
+    "6. Minimum Matches to Play" + 
+    "\nLeague stage → 50 matches" + 
+    "\nPlayoffs → 2 matches" +
+    "\nFinal → 1 match " + 
+    "\nThese are compulsory (no exceptions)",
+
+    "7. Entry Fee (per match) " +
+    "\nLeague stage → 50" + 
+    "\nPlayoffs → ₹100" +
+    "\nFinal → ₹200 ",
+
+    "8. Submission Deadline" +
+      "\nYou must join/share your team in WhatsApp group before first bowl bowled."
   ];
 
   return (
@@ -61,7 +81,7 @@ export function RulesModal({ isOpen, onClose }: RulesModalProps) {
                   <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
                     {index + 1}
                   </div>
-                  <p className="text-white/90 text-sm leading-relaxed">
+                  <p className="text-white/90 text-sm leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
                     {rule}
                   </p>
                 </div>
