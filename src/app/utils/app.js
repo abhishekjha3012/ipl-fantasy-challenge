@@ -1,6 +1,6 @@
 import { PRIZE_POOL, ENTRY_FEE, 
   LEAGUE_MATCHES, KNOCKOUT_MATCHES, 
-  FINAL_MATCHES 
+  FINAL_MATCHES, WINNER_TAKES_ALL_PRIZE_POOL 
 } from '../data/prize';
 
 import { PLAYERS } from '../data/players';
@@ -24,10 +24,26 @@ export const extractPlayerDetailByKey = (players, key) => {
   }).filter(Boolean);
 };
 
+const getPrizeForWinnerTakesAllMatch = (match, playerId) => {
+  const whoWonTakeAll = Object.keys(match.result).find(key => match.result[key] === -1);
+  if(whoWonTakeAll === playerId) {
+    const playedLength = Number(match.played?.length);
+    return WINNER_TAKES_ALL_PRIZE_POOL[playedLength];
+  } else {
+    return 0;
+  }
+};
+
 const extractWinningAmountForPlayerInMatch = (match, playerId) => {
+  const didWinnerTakesAll = Object.values(match.result).includes(-1);
+  if(didWinnerTakesAll) {
+    const winnerTakesAllPrize = getPrizeForWinnerTakesAllMatch(match, playerId);
+    return winnerTakesAllPrize; 
+  } 
+
   const playedLength = Number(match.played?.length);
   const prizeArray = PRIZE_POOL[playedLength];
-  const position = match.result?.[playerId];  
+  const position = match.result?.[playerId]; 
   const winningAmount = prizeArray?.[position];
   return winningAmount || 0;
 }

@@ -13,6 +13,21 @@ export const PRIZE_POOL = {
     12: [0, 275, 175, 100, 50, 0, 0, 0, 0, 0, 0, 0, 0] //600
 }
 
+export const WINNER_TAKES_ALL_PRIZE_POOL = {
+    1: 50,
+    2: 100,
+    3: 150,
+    4: 200,
+    5: 250,
+    6: 300,
+    7: 350,
+    8: 400,
+    9: 450,
+    10: 500,
+    11: 550,
+    12: 600
+}
+
 export const ENTRY_FEE = {
     'league': 50,
     'knockout': 100,
