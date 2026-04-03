@@ -3,6 +3,7 @@ import { TrendGraph } from './components/TrendGraph';
 import { StatsOverview } from './components/StatsOverview';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { MatchResult } from './components/MatchResult';
 import { useState, useEffect, useMemo, use } from 'react';
 import { fetchTournamentMatches } from './api/tournamentApi';
 import { useMatchData } from './MatchDataContext';
@@ -109,6 +110,9 @@ export default function App() {
 
         {/* Trend Graph */}
         <TrendGraph />
+
+        {/* Match Results */}
+        <MatchResult />
 
         {/* Footer */}
         <Footer />
