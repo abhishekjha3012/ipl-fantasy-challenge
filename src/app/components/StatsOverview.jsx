@@ -36,7 +36,7 @@ export function StatsOverview() {
       <StatsCard
         label="First"
         value={`₹${(statsCardData?.biggestWinner?.prizeWon|| 0)}`}
-        subtext={statsCardData?.biggestWinner?.name}
+        subtext={statsCardData?.biggestWinner?.nickName}
         icon={<TrendingUp size={18} className="text-green-400" />}
         gradient="bg-gradient-to-br from-green-500 to-emerald-500"
         delay={0.15}
@@ -44,7 +44,7 @@ export function StatsOverview() {
       <StatsCard
         label="Last"
         value={`₹${(statsCardData?.biggestLoser?.prizeWon || 0)}`}
-        subtext={statsCardData?.biggestLoser?.name}
+        subtext={statsCardData?.biggestLoser?.nickName}
         icon={<TrendingDown size={18} className="text-red-400" />}
         gradient="bg-gradient-to-br from-red-500 to-orange-500"
         delay={0.2}

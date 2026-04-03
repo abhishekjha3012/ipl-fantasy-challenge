@@ -13,8 +13,10 @@ export const createStatsCardData = (matchData, playerIds) => {
   playerIds.forEach((playerId) => { 
     const netTotal = calculateNetTotalForPlayer(matchData, playerId);
     const playerName = PLAYERS.find(player => player.id === playerId)?.name;
+    const playerNickname = PLAYERS.find(player => player.id === playerId)?.nickName;
     playerNetTotals.push({ 
       name: playerName || 'Unknown', 
+      nickName: playerNickname || 'Unknown',
       prizeWon : netTotal || 0
     });
   });
