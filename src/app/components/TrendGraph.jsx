@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { TrendingUp, ChevronDown, X } from 'lucide-react';
+import { TrendingUp, ChevronDown } from 'lucide-react';
 import { useMatchData } from '../MatchDataContext';
 import { COLORS } from '../data/emptyData';
 import { PLAYERS } from '../data/players';
@@ -20,9 +20,8 @@ export function TrendGraph() {
     setSelectedPlayers(prev => {
       if (prev.includes(player)) {
         return prev.filter(p => p !== player);
-      } else {
-        return [...prev, player];
       }
+      return [...prev, player];
     });
   };
 
@@ -34,20 +33,18 @@ export function TrendGraph() {
     setSelectedPlayers([]);
   };
 
-  // Calculate cumulative winnings for each player
+  // Calculate cumulative winnings for selected players
   const cumulativeData = useMemo(() => {
-    const chartData = rawMatchData.map((match, index) => {
-      const dataPoint = { name: match?.match};
+    return rawMatchData.map((match, index) => {
+      const dataPoint = { name: match?.match };
       selectedPlayers.forEach(playerName => {
-        const playerId = PLAYERS.find(p => p.nickName === playerName)?.id
+        const playerId = PLAYERS.find(p => p.nickName === playerName)?.id;
         const playerWinningArray = perMatchPlayerTotal?.[playerId] || [];
         dataPoint[playerName] = playerWinningArray[index] || 0;
       });
       return dataPoint;
     });
-
-    return chartData;
-  }, [rawMatchData, selectedPlayers]);
+  }, [rawMatchData, selectedPlayers, perMatchPlayerTotal]);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -75,97 +72,51 @@ export function TrendGraph() {
           <TrendingUp className="text-blue-400" size={24} />
           <h2 className="text-xl font-bold text-white">Winnings Trend</h2>
         </div>
-      </div>
 
-      {/* Player Filter Dropdown */}
-      <div className="mb-4 relative">
-        <button
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="w-full bg-white/5 hover:bg-white/10 border border-white/20 rounded-xl px-4 py-3 flex items-center justify-between text-white transition-all"
-        >
-          <span className="text-sm">
-            {selectedPlayers.length === 0 
-              ? 'Select players to view' 
-              : `${selectedPlayers.length} player${selectedPlayers.length > 1 ? 's' : ''} selected`}
-          </span>
-          <ChevronDown size={20} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-        </button>
+        {/* Player Filter Dropdown */}
+        <div className="relative w-72">
+          <button
+            onClick={() => setIsDropdownOpen(prev => !prev)}
+            className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-white flex justify-between items-center"
+          >
+            <span className="text-sm">
+              {selectedPlayers.length === 0 ? 'Select players to view' : `${selectedPlayers.length} selected`}
+            </span>
+            <ChevronDown size={16} className={`${isDropdownOpen ? 'rotate-180' : ''} transition-transform`} />
+          </button>
 
-        {isDropdownOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/95 backdrop-blur-lg border border-white/20 rounded-xl shadow-2xl z-10 max-h-64 overflow-y-auto">
-            <div className="flex items-center justify-between p-3 border-b border-white/10">
-              <button
-                onClick={selectAll}
-                className="text-xs text-blue-400 hover:text-blue-300 font-medium"
-              >
-                Select All
-              </button>
-              <button
-                onClick={clearAll}
-                className="text-xs text-red-400 hover:text-red-300 font-medium"
-              >
-                Clear All
-              </button>
-            </div>
-            <div className="p-2">
-              {playerNames.map((player, index) => (
-                <button
-                  key={player}
-                  onClick={() => togglePlayer(player)}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
-                >
-                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
-                    selectedPlayers.includes(player)
-                      ? 'border-blue-400 bg-blue-400'
-                      : 'border-white/30'
-                  }`}>
-                    {selectedPlayers.includes(player) && (
-                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: COLORS[index] }}
-                  />
-                  <span className="text-white text-sm">{player}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Selected Players Pills */}
-      {selectedPlayers.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {selectedPlayers.map((player, index) => {
-            const colorIndex = playerNames.indexOf(player);
-            return (
-              <div
-                key={player}
-                className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20"
-              >
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: COLORS[colorIndex] }}
-                />
-                <span className="text-white text-xs">{player}</span>
-                <button
-                  onClick={() => togglePlayer(player)}
-                  className="text-white/50 hover:text-white"
-                >
-                  <X size={14} />
-                </button>
+          {isDropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900/95 backdrop-blur-lg border border-white/20 rounded-xl shadow-2xl z-10 max-h-64 overflow-y-auto">
+              <div className="flex items-center justify-between p-3 border-b border-white/10">
+                <button onClick={selectAll} className="text-xs text-blue-400 hover:text-blue-300 font-medium">Select All</button>
+                <button onClick={clearAll} className="text-xs text-red-400 hover:text-red-300 font-medium">Clear All</button>
               </div>
-            );
-          })}
+              <div className="p-2">
+                {playerNames.map((player, index) => (
+                  <button
+                    key={player}
+                    onClick={() => togglePlayer(player)}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${selectedPlayers.includes(player) ? 'border-blue-400 bg-blue-400' : 'border-white/30'}`}>
+                      {selectedPlayers.includes(player) && (
+                        <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index] }} />
+                    <span className="text-white text-sm">{player}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Chart */}
-      {selectedPlayers.length > 0 ? (
+      { selectedPlayers.length > 0 ? (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={cumulativeData}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
