@@ -32,5 +32,5 @@ export const findAvgPerMatch = (player, perMatchPlayerWinningMinusFee) => {
   if (winningsMinusFee.length === 0) return 0;
   const total = winningsMinusFee.reduce((sum, val) => sum + val, 0);
   const avg = total / winningsMinusFee.length;
-  return avg;
+  return avg.toFixed(2);
 }

@@ -1,5 +1,4 @@
 export const rules = [
-  "Minimum 30 overs of game has to happen.",
 
   "The match must have a result. (App should not indicate that the match was abandoned).",
 

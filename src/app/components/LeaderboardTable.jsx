@@ -15,8 +15,19 @@ export function LeaderboardTable() {
   // Sort by prize won (descending)
   const sortedPlayers = useMemo(() => {
     // perMatchPlayerWinningMinusFee is an object with playerId as key and array of winnings minus fee as value
+    const amPlayer = overallPlayerTotal.find(player => player.playerId === 'AM');
+    const otherPlayers = overallPlayerTotal.filter(player => player.playerId !== 'AM');
     
-    return overallPlayerTotal.sort((a, b) => b.prizeWon - a.prizeWon);
+    const sortedList = otherPlayers.sort((a, b) => 
+      b.prizeWon - a.prizeWon
+    );
+    
+    // Append AM at the end if found
+    if (amPlayer) {
+      sortedList.push(amPlayer);
+    }
+    
+    return sortedList;
   }, [overallPlayerTotal]);
 
   const getRecentFormIndicator = (player) => {
