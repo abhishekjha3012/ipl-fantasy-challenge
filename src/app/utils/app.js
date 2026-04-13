@@ -3,6 +3,8 @@ import { PRIZE_POOL, ENTRY_FEE,
   FINAL_MATCHES, WINNER_TAKES_ALL_PRIZE_POOL 
 } from '../data/prize';
 
+import { findAverageRank } from './leaderboard';
+
 import { PLAYERS } from '../data/players';
 
 export const calculateNetTotalForPlayer = (matchData, playerId) => {
@@ -107,6 +109,7 @@ export const calculateTotalPlayerWinning = (matchData, playerIds) => {
   
   playerIds.forEach((playerId) => { 
     const netTotal = calculateNetTotalForPlayer(matchData, playerId);
+    const averageRank = findAverageRank(playerId, matchData);
     const playerName = PLAYERS.find(player => player.id === playerId)?.name;
     const playerNickname = PLAYERS.find(player => player.id === playerId)?.nickName;
     playerNetTotals.push({ 
@@ -114,6 +117,7 @@ export const calculateTotalPlayerWinning = (matchData, playerIds) => {
       nickName: playerNickname || 'Unknown',
       prizeWon : netTotal || 0,
       playerId: playerId,
+      averageRank: averageRank
     });
   });
 

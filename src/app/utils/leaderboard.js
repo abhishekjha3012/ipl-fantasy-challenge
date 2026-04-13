@@ -34,3 +34,13 @@ export const findAvgPerMatch = (player, perMatchPlayerWinningMinusFee) => {
   const avg = total / winningsMinusFee.length;
   return avg.toFixed(2);
 }
+
+export const findAverageRank = (playerId, perMatchPlayerRanks) => {
+  const ranks = perMatchPlayerRanks.map(match => match.result[playerId]).filter(Boolean) || [];
+  const playedMatch = perMatchPlayerRanks.map(match => match.played.includes(playerId)).filter(Boolean).length;
+  if (ranks.length === 0) return 'N/A';
+  if (ranks.length !== playedMatch) return 'Some matches missing';
+  const totalRank = ranks.reduce((sum, val) => sum + val, 0);
+  const avgRank = totalRank / playedMatch;
+  return avgRank.toFixed(2);
+}

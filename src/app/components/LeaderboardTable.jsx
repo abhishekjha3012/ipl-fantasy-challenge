@@ -11,16 +11,23 @@ export function LeaderboardTable() {
   const { rawMatchData, perMatchPlayerTotal, overallPlayerTotal, 
     perMatchPlayerWinningMinusFee } = useMatchData();
   const [expandedPlayer, setExpandedPlayer] = useState(null);
+  const [sortBy, setSortBy] = useState('winning'); // 'winning' or 'rank'
   
-  // Sort by prize won (descending)
+  // Sort players based on selected criteria
   const sortedPlayers = useMemo(() => {
-    // perMatchPlayerWinningMinusFee is an object with playerId as key and array of winnings minus fee as value
     const amPlayer = overallPlayerTotal.find(player => player.playerId === 'AM');
     const otherPlayers = overallPlayerTotal.filter(player => player.playerId !== 'AM');
     
-    const sortedList = otherPlayers.sort((a, b) => 
-      b.prizeWon - a.prizeWon
-    );
+    const sortedList = otherPlayers.sort((a, b) => {
+      if (sortBy === 'winning') {
+        return b.prizeWon - a.prizeWon;
+      } else if (sortBy === 'rank') {
+        return a.averageRank - b.averageRank;
+      } else if (sortBy === 'name') {
+        return a.nickName.localeCompare(b.nickName);
+      }
+      return 0;
+    });
     
     // Append AM at the end if found
     if (amPlayer) {
@@ -28,7 +35,7 @@ export function LeaderboardTable() {
     }
     
     return sortedList;
-  }, [overallPlayerTotal]);
+  }, [overallPlayerTotal, sortBy, perMatchPlayerWinningMinusFee]);
 
   const getRecentFormIndicator = (player) => {
     const totalMatches = rawMatchData.length || 0;
@@ -77,9 +84,24 @@ export function LeaderboardTable() {
       className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 shadow-2xl border border-white/20 relative overflow-hidden"
       style={{ animation: 'slideUp 0.6s ease-out 0.3s both' }}
     >
-      <div className="flex items-center gap-2 mb-4">
-        <Trophy className="text-yellow-400" size={24} />
-        <h2 className="text-xl font-bold text-white">Leaderboard</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Trophy className="text-yellow-400" size={24} />
+          <h2 className="text-xl font-bold text-white">Leaderboard</h2>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <span className="text-white/70 text-sm">Sort by:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="bg-white/20 border border-white/30 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="winning">Win amount</option>
+            <option value="rank">Average rank</option>
+            <option value="name">Name</option>
+          </select>
+        </div>
       </div>
       
       <div className="space-y-3">
@@ -116,16 +138,24 @@ export function LeaderboardTable() {
 
                 {/* Player Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-white font-semibold text-sm truncate">
                       {player.nickName}
                     </span>
                     {getRecentFormIndicator(player)}
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-white/50 mt-0.5 flex-wrap">
-                    <span>{getMatchesPlayed(rawMatchData, player.playerId)} / {rawMatchData.length} matches</span>
-                    <span className="text-blue-300">
-                      {getWinRate(player)}% win rate
+                  <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+                    <span className="text-xs text-white/50">{getMatchesPlayed(rawMatchData, player.playerId)} / {rawMatchData.length} matches</span>
+                    <span className="text-blue-300 text-xs">
+                      {getWinRate(player)}% win
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-blue-300 text-xs">
+                      {player.averageRank !== 'N/A' ? 
+                        `Avg. Rank: ${player.averageRank}` : 
+                        'Avg. Rank: N/A'
+                      }
                     </span>
                   </div>
                 </div>
