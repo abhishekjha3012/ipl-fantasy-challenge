@@ -146,8 +146,8 @@ export function TrendGraph() {
                   dataKey={player}
                   stroke={COLORS[colorIndex]}
                   strokeWidth={2}
-                  dot={{ fill: COLORS[colorIndex], r: 4 }}
-                  activeDot={{ r: 6 }}
+                  dot={false}
+                  activeDot={false}
                 />
               );
             })}
