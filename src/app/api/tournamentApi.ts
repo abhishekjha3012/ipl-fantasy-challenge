@@ -23,6 +23,8 @@ export async function fetchTournamentMatches(): Promise<AuthoritativeTournamentM
       signal: controller.signal,
       headers: {
         'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
       },
     });
 
