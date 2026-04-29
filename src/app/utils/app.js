@@ -1,6 +1,7 @@
 import { PRIZE_POOL, ENTRY_FEE, 
   LEAGUE_MATCHES, KNOCKOUT_MATCHES, 
-  FINAL_MATCHES, WINNER_TAKES_ALL_PRIZE_POOL 
+  FINAL_MATCHES, WINNER_TAKES_ALL_PRIZE_POOL,
+  SPECIAL_CONDITIONS, 
 } from '../data/prize';
 
 import { findAverageRank } from './leaderboard';
@@ -36,6 +37,11 @@ const getPrizeForWinnerTakesAllMatch = (match, playerId) => {
   }
 };
 
+const getSpecialCondtion = (match, playerId) => {
+  if (!match || !playerId) return 0;
+  return SPECIAL_CONDITIONS[match.number]?.[playerId] ?? 0;
+};
+
 const extractWinningAmountForPlayerInMatch = (match, playerId) => {
   const didWinnerTakesAll = Object.values(match.result).includes(-1);
   if(didWinnerTakesAll) {
@@ -46,7 +52,7 @@ const extractWinningAmountForPlayerInMatch = (match, playerId) => {
   const playedLength = Number(match.played?.length);
   const prizeArray = PRIZE_POOL[playedLength];
   const position = match.result?.[playerId]; 
-  const winningAmount = prizeArray?.[position];
+  const winningAmount = prizeArray?.[position] + getSpecialCondtion(match, playerId);
   return winningAmount || 0;
 }
 

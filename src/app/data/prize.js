@@ -43,3 +43,19 @@ export const LEAGUE_MATCHES = [
 ];
 export const KNOCKOUT_MATCHES = [70,71,72,73];
 export const FINAL_MATCHES = [74];
+
+export const SPECIAL_CONDITIONS = {
+  1: {
+    CJ: -50,
+    SJ: 25,
+    VJ: 25,
+  },
+  39: {
+    SWJ: -25,
+    PJ: -25,
+  },
+  40: {
+    CJ: -25,
+    PJ: -25,
+  },
+};

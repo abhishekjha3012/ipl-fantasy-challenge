@@ -41,15 +41,15 @@ export const PLAYERS = [
     color: "#F7FF8E",
     imageAddress: "asset/SSJ.png",
   },
-  {
-    name: "Aishwaryah",
-    nickName: "Birpuria Bagh",
-    id: "AM",
-    num: 5,
-    color: "#8EFFF7",
-    imageAddress:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-gfQe8gjby3PROpW_GW0K2-3OjoVXYM_EvA&usqp=CAU",
-  },
+  // {
+  //   name: "Aishwaryah",
+  //   nickName: "Birpuria Bagh",
+  //   id: "AM",
+  //   num: 5,
+  //   color: "#8EFFF7",
+  //   imageAddress:
+  //     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-gfQe8gjby3PROpW_GW0K2-3OjoVXYM_EvA&usqp=CAU",
+  // },
   {
     name: "Chanchal",
     nickName: "Rangeela Rohu",

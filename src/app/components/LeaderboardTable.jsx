@@ -15,10 +15,7 @@ export function LeaderboardTable() {
   
   // Sort players based on selected criteria
   const sortedPlayers = useMemo(() => {
-    const amPlayer = overallPlayerTotal.find(player => player.playerId === 'AM');
-    const otherPlayers = overallPlayerTotal.filter(player => player.playerId !== 'AM');
-    
-    const sortedList = otherPlayers.sort((a, b) => {
+    const sortedList = overallPlayerTotal.sort((a, b) => {
       if (sortBy === 'winning') {
         return b.prizeWon - a.prizeWon;
       } else if (sortBy === 'rank') {
@@ -28,11 +25,6 @@ export function LeaderboardTable() {
       }
       return 0;
     });
-    
-    // Append AM at the end if found
-    if (amPlayer) {
-      sortedList.push(amPlayer);
-    }
     
     return sortedList;
   }, [overallPlayerTotal, sortBy, perMatchPlayerWinningMinusFee]);
