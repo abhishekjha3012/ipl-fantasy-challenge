@@ -58,4 +58,8 @@ export const SPECIAL_CONDITIONS = {
     CJ: -25,
     PJ: -25,
   },
+  51: {
+    VJ: -25,
+    SJ: -25,
+  },
 };
