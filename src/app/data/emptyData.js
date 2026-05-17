@@ -7,6 +7,23 @@ export const INITIAL_PLAYER_TOTALS = PLAYERS.reduce((acc, player) => {
   return acc;
 }, {});
 
+export const INITIAL_PLAYER_MATRIX = PLAYERS.reduce((acc, player) => {
+  acc[player.id] = {
+    "-1": 0,
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+  };
+  return acc;
+}, {});
+
 export const EMPTY_STAT_CARD_DATA = {
     totalPrizePool: 0,
     biggestWinner: { name: 'N/A', prizeWon: 0 },

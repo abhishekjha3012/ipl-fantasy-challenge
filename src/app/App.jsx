@@ -4,6 +4,7 @@ import { StatsOverview } from './components/StatsOverview';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { MatchResult } from './components/MatchResult';
+import { PlayerRankDistribution } from './components/PlayerRankDistribution';
 import { useState, useEffect, useMemo, use } from 'react';
 import { fetchTournamentMatches } from './api/tournamentApi';
 import { useMatchData } from './MatchDataContext';
@@ -11,8 +12,9 @@ import { calculatePerMatchPlayerTotal,
   extractPlayerDetailByKey, calculateTotalPlayerWinning,
   calculatePerMatchPlayeWinningMinusEntryFee,
 } from './utils/app';
+import { calculateEachPlayerMatrix } from './utils/rankMatrix';
 import { PLAYERS } from './data/players';
-import { INITIAL_PLAYER_TOTALS } from './data/emptyData';
+import { INITIAL_PLAYER_TOTALS, INITIAL_PLAYER_MATRIX} from './data/emptyData';
 
 export default function App() {
   const [ isLoading, setIsLoading ] = useState(false);
@@ -27,6 +29,7 @@ export default function App() {
     setPerMatchPlayerTotal,
     setOverallPlayerTotal,
     setPerMatchPlayerWinningMinusFee,
+    setRankMatrix,
   } = useMatchData();
   
   useEffect(() => {
@@ -81,6 +84,14 @@ export default function App() {
     }
   }, [rawMatchData]);
 
+  useEffect(() => {
+    if (rawMatchData.length > 0) {
+      const rankMatrix = calculateEachPlayerMatrix(rawMatchData, playerIds);
+      setRankMatrix(rankMatrix);
+    } else {
+      setRankMatrix(INITIAL_PLAYER_MATRIX);
+    }
+  }, [rawMatchData]);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex justify-center overflow-auto relative">
@@ -113,6 +124,9 @@ export default function App() {
 
         {/* Match Results */}
         <MatchResult />
+
+        {/* Player Rank Distribution */}
+        <PlayerRankDistribution />
 
         {/* Footer */}
         <Footer />

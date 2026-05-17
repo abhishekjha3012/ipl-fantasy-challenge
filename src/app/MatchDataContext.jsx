@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, useState } from 'react';
+import { PLAYERS } from './data/players';
 
 const MatchDataContext = createContext();
 
@@ -14,7 +15,8 @@ export const MatchDataProvider = ({ children }) => {
   const [ rawMatchData, setRawMatchData ] = useState([]);
   const [ perMatchPlayerTotal, setPerMatchPlayerTotal ] = useState([]);
   const [ overallPlayerTotal, setOverallPlayerTotal ] = useState([]);
-  const [ perMatchPlayerWinningMinusFee, setPerMatchPlayerWinningMinusFee ] = useState([]);   
+  const [ perMatchPlayerWinningMinusFee, setPerMatchPlayerWinningMinusFee ] = useState([]); 
+  const [ rankMatrix, setRankMatrix ] = useState({});
 
   const value = useMemo(() => ({
     rawMatchData,
@@ -25,10 +27,13 @@ export const MatchDataProvider = ({ children }) => {
     setOverallPlayerTotal,
     perMatchPlayerWinningMinusFee,
     setPerMatchPlayerWinningMinusFee,
+    rankMatrix,
+    setRankMatrix,
   }), [
     rawMatchData, 
     perMatchPlayerTotal, overallPlayerTotal, 
-    perMatchPlayerWinningMinusFee
+    perMatchPlayerWinningMinusFee,
+    rankMatrix,
 ]);
 
   return (
