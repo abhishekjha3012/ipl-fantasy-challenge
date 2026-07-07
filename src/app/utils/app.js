@@ -42,6 +42,18 @@ const getSpecialCondtion = (match, playerId) => {
   return SPECIAL_CONDITIONS[match.number]?.[playerId] ?? 0;
 };
 
+const getConversionFactorForMatch = (number) => {
+  if (!number) return 1;
+  if (LEAGUE_MATCHES.includes(number)) {
+    return 1; // No conversion for league matches
+  } else if (KNOCKOUT_MATCHES.includes(number)) {
+    return 2; // Example: 2X for knockout matches
+  } else if (FINAL_MATCHES.includes(number)) {
+    return 4; // Example: 4X for final matches
+  }
+  return 1; // Default conversion factor
+};
+
 const extractWinningAmountForPlayerInMatch = (match, playerId) => {
   const didWinnerTakesAll = Object.values(match.result).includes(-1);
   if(didWinnerTakesAll) {
@@ -52,28 +64,16 @@ const extractWinningAmountForPlayerInMatch = (match, playerId) => {
   const playedLength = Number(match.played?.length);
   const prizeArray = PRIZE_POOL[playedLength];
   const position = match.result?.[playerId]; 
-  const winningAmount = prizeArray?.[position] + getSpecialCondtion(match, playerId);
+  const conversionFactor = getConversionFactorForMatch(match.number); 
+  const winningAmount = (prizeArray?.[position] * conversionFactor) + getSpecialCondtion(match, playerId);
   return winningAmount || 0;
 }
 
 const extractEntryFeeForPlayerInMatch = (match, playerId) => {
   const didplayerPlay = match.played?.includes(playerId);
   if (!didplayerPlay) return 0;
-  let matchType = 'league'; // Default to league if type is missing
-  switch (match.number) {
-    case LEAGUE_MATCHES.includes(match.number):
-      matchType = 'league';
-      break;
-    case KNOCKOUT_MATCHES.includes(match.number):
-      matchType = 'knockout';
-      break;
-    case FINAL_MATCHES.includes(match.number):
-      matchType = 'final';
-      break;  
-    default:
-      matchType = 'league';
-  }
-  const entryFee = ENTRY_FEE[matchType];
+  const conversionFactor = getConversionFactorForMatch(match.number);
+  const entryFee = ENTRY_FEE * conversionFactor;
   return entryFee;
 }
 
